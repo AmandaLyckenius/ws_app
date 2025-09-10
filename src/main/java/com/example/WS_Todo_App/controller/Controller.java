@@ -2,10 +2,12 @@ package com.example.WS_Todo_App.controller;
 
 import com.example.WS_Todo_App.model.Task;
 import com.example.WS_Todo_App.repository.TaskRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tasks")
@@ -40,5 +42,22 @@ public class Controller {
         }
         return ResponseEntity.ok(tasks);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Task> deleteTaskById(@PathVariable ("id") String id){
+
+        Optional<Task> optionalTask = repo.findById(id);
+
+        if (optionalTask.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Task existingTask = optionalTask.get();
+        repo.delete(existingTask);
+
+        return ResponseEntity.status(HttpStatus.OK).body(existingTask);
+    }
+
+
 }
 
