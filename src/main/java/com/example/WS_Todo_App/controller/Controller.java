@@ -55,7 +55,7 @@ public class Controller {
         Task existingTask = optionalTask.get();
         repo.delete(existingTask);
 
-        return ResponseEntity.status(HttpStatus.OK).body(existingTask);
+        return ResponseEntity.ok(existingTask);
     }
 
     @PatchMapping("/{id}")
