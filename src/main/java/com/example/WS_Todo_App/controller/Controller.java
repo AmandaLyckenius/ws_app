@@ -58,6 +58,42 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.OK).body(existingTask);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Task> updateDescription(@PathVariable ("id") String id, @RequestBody String newDescription){
+        Optional<Task> optionalTask = repo.findById(id);
+
+        if (optionalTask.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Task existingTask = optionalTask.get();
+        existingTask.setDescription(newDescription);
+        Task taskUpdated = repo.save(existingTask);
+
+        return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Task> updateTaskDone(@PathVariable ("id") String id){
+        Optional<Task> optionalTask = repo.findById(id);
+
+        if (optionalTask.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Task taskToMark = optionalTask.get();
+        if (!taskToMark.isDone()){
+            taskToMark.setDone(true);
+            repo.save(taskToMark);
+            return ResponseEntity.status(HttpStatus.OK).body(taskToMark);
+        }
+
+        taskToMark.setDone(false);
+        repo.save(taskToMark);
+        return ResponseEntity.status(HttpStatus.OK).body(taskToMark);
+
+    }
+
 
 }
 
