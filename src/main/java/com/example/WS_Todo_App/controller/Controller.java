@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,19 +46,17 @@ public class Controller {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/topfive")
+    @GetMapping("/firstFive")
     public ResponseEntity<List<Task>> getTopFiveTasks() {
-        List <Task> topFive = repo.findTopFive(PageRequest.of(0,5));
+        List <Task> firstFive = repo.findTopFive(PageRequest.of(0,5));
 
-        if (topFive.isEmpty()) {
+        if (firstFive.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(topFive);
+        return ResponseEntity.ok(firstFive);
 
 
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Task> deleteTaskById(@PathVariable ("id") String id){
