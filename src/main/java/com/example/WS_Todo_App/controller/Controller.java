@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/tasks")
@@ -18,7 +20,7 @@ public class Controller {
         this.repo = repo;
     }
     @PostMapping("/add")
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
         Task save=repo.save(task);
         return ResponseEntity.status(201).body(save);
     }
