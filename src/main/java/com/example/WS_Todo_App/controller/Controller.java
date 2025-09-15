@@ -58,7 +58,7 @@ public class Controller {
         return ResponseEntity.ok(existingTask);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/description")
     public ResponseEntity<Task> updateDescription(@PathVariable ("id") String id, @RequestBody String newDescription){
         Optional<Task> optionalTask = repo.findById(id);
 
@@ -73,7 +73,7 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/done")
     public ResponseEntity<Task> updateTaskDone(@PathVariable ("id") String id){
         Optional<Task> optionalTask = repo.findById(id);
 
