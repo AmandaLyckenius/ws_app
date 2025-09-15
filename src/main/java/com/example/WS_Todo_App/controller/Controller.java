@@ -2,9 +2,11 @@ package com.example.WS_Todo_App.controller;
 
 import com.example.WS_Todo_App.model.Task;
 import com.example.WS_Todo_App.repository.TaskRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +44,20 @@ public class Controller {
         }
         return ResponseEntity.ok(tasks);
     }
+
+    @GetMapping("/topfive")
+    public ResponseEntity<List<Task>> getTopFiveTasks() {
+        List <Task> topFive = repo.findTopFive(PageRequest.of(0,5));
+
+        if (topFive.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(topFive);
+
+
+    }
+
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Task> deleteTaskById(@PathVariable ("id") String id){
