@@ -61,7 +61,7 @@ public class Controller {
     }
 
     @PatchMapping("/{id}/description")
-    public ResponseEntity<Task> updateDescription(@PathVariable ("id") String id, @RequestBody String newDescription){
+    public ResponseEntity<Task> updateDescription(@PathVariable ("id") String id, @Valid @RequestBody String newDescription){
         Optional<Task> optionalTask = repo.findById(id);
 
         if (optionalTask.isEmpty()){
