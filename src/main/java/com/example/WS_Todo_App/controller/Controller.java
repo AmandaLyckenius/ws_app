@@ -2,6 +2,7 @@ package com.example.WS_Todo_App.controller;
 
 import com.example.WS_Todo_App.model.Task;
 import com.example.WS_Todo_App.repository.TaskRepository;
+import com.example.WS_Todo_App.repository.TitleCount;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,6 +107,19 @@ public class Controller {
         taskToMark.setDone(false);
         repo.save(taskToMark);
         return ResponseEntity.status(HttpStatus.OK).body(taskToMark);
+
+    }
+
+
+    @GetMapping("/top-common")
+    public ResponseEntity<List<TitleCount>> getTopCommon(@RequestParam(defaultValue = "5") int limit){
+        List<TitleCount> result = repo.findTopNTitles(limit);
+
+        if(result.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(result);
 
     }
 
