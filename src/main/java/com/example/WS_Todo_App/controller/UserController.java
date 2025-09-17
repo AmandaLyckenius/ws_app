@@ -18,10 +18,19 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<TaskUser> createUser(@Valid @RequestBody TaskUser user) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody TaskUser user) {
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            return ResponseEntity.badRequest().body("Username cannot be blank");
+        }
+
+        if (taskUserRepo.findByUsername(user.getUsername()).isPresent()) {
+            return ResponseEntity.status(409).body("Username already exists");
+        }
+
         TaskUser saved = taskUserRepo.save(user);
         return ResponseEntity.status(201).body(saved);
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<TaskUser>> getAllUsers() {
@@ -35,6 +44,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<TaskUser> getUserById(@PathVariable String id) {
         return taskUserRepo.findById(id).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<TaskUser> getUserByUsername(@PathVariable String username) {
+        return taskUserRepo.findByUsername(username).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
