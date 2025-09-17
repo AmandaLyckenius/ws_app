@@ -7,10 +7,13 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByTitle(String title);
+    List<Task> findByUserIdAndTitle(String username, String title);
+
 
     @Query("{}")
     List<Task> findTopFive(Pageable pageable);

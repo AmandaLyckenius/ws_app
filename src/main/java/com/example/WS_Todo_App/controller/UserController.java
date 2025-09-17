@@ -41,11 +41,11 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskUser> getUserById(@PathVariable String id) {
-        return taskUserRepo.findById(id).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    //@GetMapping("/{id}")
+    //public ResponseEntity<TaskUser> getUserById(@PathVariable String id) {
+      //  return taskUserRepo.findById(id).map(ResponseEntity::ok)
+             //   .orElse(ResponseEntity.notFound().build());
+   // }
 
     @GetMapping("/{username}")
     public ResponseEntity<TaskUser> getUserByUsername(@PathVariable String username) {

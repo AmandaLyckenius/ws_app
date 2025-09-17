@@ -1,7 +1,9 @@
 package com.example.WS_Todo_App.controller;
 
 import com.example.WS_Todo_App.model.Task;
+import com.example.WS_Todo_App.model.TaskUser;
 import com.example.WS_Todo_App.repository.TaskRepository;
+import com.example.WS_Todo_App.repository.TaskUserRepository;
 import com.example.WS_Todo_App.repository.TitleCount;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -21,9 +23,11 @@ import jakarta.validation.Valid;
 @Validated
 public class Controller {
     private final TaskRepository repo;
+    private final TaskUserRepository userRepo;
 
-    public Controller(TaskRepository repo) {
+    public Controller(TaskRepository repo, TaskUserRepository userRepo) {
         this.repo = repo;
+        this.userRepo = userRepo;
     }
     @PostMapping("/add")
     public ResponseEntity<Task> createTask(@Valid @RequestBody Task task, @RequestParam String username) {
@@ -32,7 +36,7 @@ public class Controller {
             return ResponseEntity.badRequest().build();
         }
 
-        task.setUserId(username);
+        task.setUserId(username.trim());
 
         Task save=repo.save(task);
         return ResponseEntity.status(201).body(save);
@@ -85,30 +89,29 @@ public class Controller {
         return ResponseEntity.ok(existingTask);
     }
 
-    @PatchMapping("/{id}/description")
-    public ResponseEntity<Task> updateDescription(@PathVariable ("id") String id, @Valid @RequestBody String newDescription){
-        Optional<Task> optionalTask = repo.findById(id);
+    @PatchMapping("/description")
+    public ResponseEntity<Task> updateDescription(@RequestParam String username, @RequestParam String title, @RequestBody String newDescription){
+        List<Task> task = repo.findByUserIdAndTitle(username.trim(), title.trim());
 
-        if (optionalTask.isEmpty()){
+        if (task.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Task existingTask = optionalTask.get();
+        Task existingTask = task.get(0);
         existingTask.setDescription(newDescription);
         Task taskUpdated = repo.save(existingTask);
 
         return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
     }
 
-    @PatchMapping("/{id}/done")
-    public ResponseEntity<Task> updateTaskDone(@PathVariable ("id") String id){
-        Optional<Task> optionalTask = repo.findById(id);
-
-        if (optionalTask.isEmpty()){
+    @PatchMapping("/done")
+    public ResponseEntity<Task> updateTaskDone(@RequestParam String username, @RequestParam String title){
+       List<Task> task = repo.findByUserIdAndTitle(username.trim(), title.trim());
+        if (task.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Task taskToMark = optionalTask.get();
+        Task taskToMark = task.get(0);
         if (!taskToMark.isDone()){
             taskToMark.setDone(true);
             repo.save(taskToMark);

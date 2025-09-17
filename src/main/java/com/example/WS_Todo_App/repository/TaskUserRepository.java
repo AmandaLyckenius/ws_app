@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface TaskUserRepository extends MongoRepository<TaskUser, String> {
     Optional<TaskUser> findByUsername(String username);
+
 }
