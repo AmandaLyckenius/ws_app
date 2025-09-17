@@ -26,7 +26,14 @@ public class Controller {
         this.repo = repo;
     }
     @PostMapping("/add")
-    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task, @RequestParam String username) {
+
+        if (username.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        task.setUserId(username);
+
         Task save=repo.save(task);
         return ResponseEntity.status(201).body(save);
     }
