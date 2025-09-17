@@ -7,6 +7,7 @@ import com.example.WS_Todo_App.repository.TaskUserRepository;
 import com.example.WS_Todo_App.repository.TitleCount;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import jakarta.validation.Valid;
 
@@ -23,18 +25,13 @@ import jakarta.validation.Valid;
 @Validated
 public class Controller {
     private final TaskRepository repo;
-    private final TaskUserRepository userRepo;
 
-    public Controller(TaskRepository repo, TaskUserRepository userRepo) {
+    public Controller(TaskRepository repo) {
         this.repo = repo;
-        this.userRepo = userRepo;
+
     }
     @PostMapping("/add")
     public ResponseEntity<Task> createTask(@Valid @RequestBody Task task, @RequestParam String username) {
-
-        if (username.isBlank()) {
-            return ResponseEntity.badRequest().build();
-        }
 
         task.setUserId(username.trim());
 
@@ -62,35 +59,28 @@ public class Controller {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/firstFive")
-    public ResponseEntity<List<Task>> getTopFiveTasks() {
-        List <Task> firstFive = repo.findTopFive(PageRequest.of(0,5));
+    @DeleteMapping("/delete")
+    public ResponseEntity<Task> deleteTaskByTitle(@RequestParam String username, @RequestParam String title){
 
-        if (firstFive.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(firstFive);
+        List<Task> task = repo.findByUserIdAndTitle(username.trim(), title.trim());
 
-
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Task> deleteTaskById(@PathVariable ("id") String id){
-
-        Optional<Task> optionalTask = repo.findById(id);
-
-        if (optionalTask.isEmpty()){
+        if (task.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Task existingTask = optionalTask.get();
+        Task existingTask = task.get(0);
         repo.delete(existingTask);
 
         return ResponseEntity.ok(existingTask);
     }
 
-    @PatchMapping("/description")
-    public ResponseEntity<Task> updateDescription(@RequestParam String username, @RequestParam String title, @RequestBody String newDescription){
+    @PatchMapping("/updateDescription")
+    public ResponseEntity<Task> updateDescription(@RequestParam String username, @RequestParam String title,
+                                                  @RequestBody String newDescription){
+        newDescription = newDescription.trim();
+        if (newDescription.length() > 500) {
+            return ResponseEntity.badRequest().build();
+        }
         List<Task> task = repo.findByUserIdAndTitle(username.trim(), title.trim());
 
         if (task.isEmpty()){
@@ -104,7 +94,7 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
     }
 
-    @PatchMapping("/done")
+    @PatchMapping("/setDone")
     public ResponseEntity<Task> updateTaskDone(@RequestParam String username, @RequestParam String title){
        List<Task> task = repo.findByUserIdAndTitle(username.trim(), title.trim());
         if (task.isEmpty()) {
@@ -126,7 +116,8 @@ public class Controller {
 
 
     @GetMapping("/top-common")
-    public ResponseEntity<List<TitleCount>> getTopCommon(@RequestParam(defaultValue = "5") @Min(1) @Max(100) int limit){
+    public ResponseEntity<List<TitleCount>> getTopCommon(@RequestParam(defaultValue = "5")  @Min(1) @Max(100) int limit){
+
         List<TitleCount> result = repo.findTopNTitles(limit);
 
         if(result.isEmpty()){

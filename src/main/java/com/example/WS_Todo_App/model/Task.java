@@ -21,6 +21,7 @@ public class Task {
 
     private boolean done;
 
+    @NotBlank(message = "Username is required")
     private String userId;
 
     public Task() {
