@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByTitle(String title);
     List<Task> findByUserIdAndTitle(String username, String title);
+    List<Task> findByUserId(String userId);
 
 
     @Query("{}")

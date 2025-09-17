@@ -49,6 +49,16 @@ public class Controller {
         return ResponseEntity.ok(tasks);
     }
 
+    @GetMapping("/all/{username}")
+    public ResponseEntity<List<Task>> getAllTasks(@PathVariable ("username") String username) {
+        List<Task> tasks = repo.findByUserId(username);
+
+        if (tasks.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(tasks);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<Task>> getTasksByTitle(@RequestParam String title) {
         List<Task> tasks = repo.findByTitle(title);
