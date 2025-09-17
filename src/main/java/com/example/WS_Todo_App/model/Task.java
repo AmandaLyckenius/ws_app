@@ -21,14 +21,18 @@ public class Task {
 
     private boolean done;
 
+    private String userId;
+
     public Task() {
     }
 
-    public Task(String id, String title, String description, boolean done) {
+    public Task(String id, String title, String description, boolean done, String userId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.done=done;
+        this.userId = userId;
+
 
     }
 
@@ -63,4 +67,12 @@ public class Task {
     public void setDone(boolean done) {
         this.done = done;
     }
+
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
 }
