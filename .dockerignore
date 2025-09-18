@@ -1,0 +1,18 @@
+# Byggmappar
+build/
+.gradle/
+out/
+target/
+
+# IDE/OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Git
+.git
+.gitignore
+
+# Sonst
+node_modules/
